@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1006]C:\Users\renan\Documents\Visual Studio 2013\Projects\mock\mock\bin\Debug\mock.dll</TopNode>
+  <SelectedNode>[0-1006]C:\Users\renan\Documents\Visual Studio 2013\Projects\mock\mock\bin\Debug\mock.dll</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1006]C:\Users\renan\Documents\Visual Studio 2013\Projects\mock\mock\bin\Debug\mock.dll" Expanded="true" />
+    <Node UniqueName="[0-1007]mock" Expanded="true" />
+    <Node UniqueName="[0-1008]mock.testes" Expanded="true" />
+    <Node UniqueName="[0-1000]mock.testes.EncerradorDeLeilaoTeste" Expanded="true" />
+    <Node UniqueName="[0-1004]mock.testes.GeradorDePagamentoTeste" Expanded="true" />
+  </Nodes>
+</VisualState>
