@@ -125,5 +125,77 @@ namespace mock.testes
             dao.Verify(v => v.atualiza(leilao1), Times.Never);
 
         }
+
+        [Test]
+        public void DeveContinuarMesmoQuandoLancaExcecao()
+        {
+            var diaDaSemanaPassada = new DateTime(1999, 5, 5);
+
+            var leilao1 = new Leilao("Tv de plasma");
+            leilao1.naData(diaDaSemanaPassada);
+            var leilao2 = new Leilao("Playstation");
+            leilao2.naData(diaDaSemanaPassada);
+
+            var ListaDeLeioloes = new List<Leilao> { leilao1, leilao2 };
+
+            var dao = new Mock<LeilaoDaoFalso>();
+            dao.Setup(d => d.correntes()).Returns(ListaDeLeioloes);
+            dao.Setup(d => d.atualiza(leilao1)).Throws(new Exception());
+            var carteiro = new Mock<ICarteiro>();
+
+            var encerrador = new EncerradorDeLeilao(dao.Object, carteiro.Object);
+            encerrador.encerra();
+
+            dao.Verify(d => d.atualiza(leilao2), Times.Once);
+            carteiro.Verify(c => c.envia(leilao2), Times.Once);
+            carteiro.Verify(c => c.envia(leilao1), Times.Never());
+        }
+
+        [Test]
+        public void DeveContinuarMesmoQuandoLancaExcecaoNoCarteiro()
+        {
+            var diaDaSemanaPassada = new DateTime(1999, 5, 5);
+
+            var leilao1 = new Leilao("Tv de plasma");
+            leilao1.naData(diaDaSemanaPassada);
+            var leilao2 = new Leilao("Playstation");
+            leilao2.naData(diaDaSemanaPassada);
+
+            var ListaDeLeioloes = new List<Leilao> { leilao1, leilao2 };
+
+            var dao = new Mock<LeilaoDaoFalso>();
+            dao.Setup(d => d.correntes()).Returns(ListaDeLeioloes);
+            var carteiro = new Mock<ICarteiro>();
+            carteiro.Setup(c => c.envia(leilao1)).Throws(new Exception());
+            var encerrador = new EncerradorDeLeilao(dao.Object, carteiro.Object);
+            encerrador.encerra();
+
+            dao.Verify(d => d.atualiza(leilao2), Times.Once);
+            carteiro.Verify(c => c.envia(leilao2), Times.Once);
+        }
+
+        [Test]
+        public void NaoDeveEnviarEmailCasoTodasChamadasDoAtualizaLancemExcecoes()
+        {
+            var diaDaSemanaPassada = new DateTime(1999, 5, 5);
+
+            var leilao1 = new Leilao("Tv de plasma");
+            leilao1.naData(diaDaSemanaPassada);
+            var leilao2 = new Leilao("Playstation");
+            leilao2.naData(diaDaSemanaPassada);
+            var leilao3 = new Leilao("Playstation");
+            leilao3.naData(diaDaSemanaPassada);
+
+            var ListaDeLeioloes = new List<Leilao> { leilao1, leilao2,leilao3 };
+
+            var dao = new Mock<LeilaoDaoFalso>();
+            dao.Setup(d => d.correntes()).Returns(ListaDeLeioloes);
+            dao.Setup(d => d.atualiza(It.IsAny<Leilao>())).Throws(new Exception());
+            var carteiro = new Mock<ICarteiro>();
+            var encerrador = new EncerradorDeLeilao(dao.Object, carteiro.Object);
+            encerrador.encerra();
+
+            carteiro.Verify(c => c.envia(It.IsAny<Leilao>()), Times.Never);
+        }
     }
 }

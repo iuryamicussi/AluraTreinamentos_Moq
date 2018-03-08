@@ -22,7 +22,7 @@ namespace mock.servico
         private IRepositorioDeLeiloes dao;
         private ICarteiro carteiro;
 
-        public EncerradorDeLeilao(IRepositorioDeLeiloes dao,ICarteiro carteiro)
+        public EncerradorDeLeilao(IRepositorioDeLeiloes dao, ICarteiro carteiro)
         {
             total = 0;
             this.dao = dao;
@@ -40,10 +40,17 @@ namespace mock.servico
 
                 if (comecouSemanaPassada(l))
                 {
-                    l.encerra();
-                    total++;
-                    dao.atualiza(l);
-                    carteiro.envia(l);
+                    try
+                    {
+                        l.encerra();
+                        total++;
+                        dao.atualiza(l);
+                        carteiro.envia(l);
+                    }
+                    catch (Exception ex)
+                    {
+                        //Log
+                    }
                 }
             }
         }
