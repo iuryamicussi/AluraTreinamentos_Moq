@@ -17,28 +17,77 @@ namespace mock.testes
         [Test]
         public void DeveGerarPagamentoParaLeilaoEncerrado()
         {
+            var leilaoDao = new Mock<LeilaoDaoFalso>();
+            var avaliador = new Avaliador();
+            var pagamentoDao = new Mock<IPagamentoDao>();
+
             var leilao1 = new Leilao("Playstation");
             leilao1.naData(new DateTime(1999, 5, 5));
-
             leilao1.propoe(new Lance(new Usuario("renan"), 500));
             leilao1.propoe(new Lance(new Usuario("Felipe"), 600));
-
             var listaDeLeiloes = new List<Leilao> { leilao1 };
-            var leilaoDao = new Mock<LeilaoDaoFalso>();
+            
             leilaoDao.Setup(l => l.encerrados()).Returns(listaDeLeiloes);
-
-            var avaliador = new Mock<Avaliador>();
-            avaliador.Setup(a => a.maiorValor).Returns(600);
-
-            var pagamentoDao = new Mock<IPagamentoDao>();
 
             Pagamento pagamentoCapturado = null;
             pagamentoDao.Setup(p => p.Salvar(It.IsAny<Pagamento>())).Callback<Pagamento>(c => pagamentoCapturado = c);
 
-            var gerador = new GeradorDePagamento(leilaoDao.Object,avaliador.Object,pagamentoDao.Object);
+            var gerador = new GeradorDePagamento(leilaoDao.Object,avaliador,pagamentoDao.Object);
             gerador.gera();
 
             Assert.AreEqual(600, pagamentoCapturado.valor);
+        }
+
+        [Test]
+        public void DeveJogarParaOProximoDiaUtil()
+        {
+            var leilaoDao = new Mock<LeilaoDaoFalso>();
+            var avaliador = new Avaliador();
+            var pagamentoDao = new Mock<IPagamentoDao>();
+            var relogio = new Mock<IRelogio>();
+
+            relogio.Setup(r => r.hoje()).Returns(new DateTime(2012, 4, 7));
+            var leilao1 = new Leilao("Playstation");
+            leilao1.naData(new DateTime(1999, 5, 5));
+            leilao1.propoe(new Lance(new Usuario("renan"), 500));
+            leilao1.propoe(new Lance(new Usuario("Felipe"), 600));
+            var listaDeLeiloes = new List<Leilao> { leilao1 };
+
+            leilaoDao.Setup(l => l.encerrados()).Returns(listaDeLeiloes);
+
+            Pagamento pagamentoCapturado = null;
+            pagamentoDao.Setup(p => p.Salvar(It.IsAny<Pagamento>())).Callback<Pagamento>(c => pagamentoCapturado = c);
+
+            var gerador = new GeradorDePagamento(leilaoDao.Object, avaliador, pagamentoDao.Object,relogio.Object);
+            gerador.gera();
+
+            Assert.AreEqual(DayOfWeek.Monday, pagamentoCapturado.data.DayOfWeek);
+        }
+
+        [Test]
+        public void DeveJogarParaOProximoDiaUtilCasoDomingo()
+        {
+            var leilaoDao = new Mock<LeilaoDaoFalso>();
+            var avaliador = new Avaliador();
+            var pagamentoDao = new Mock<IPagamentoDao>();
+            var relogio = new Mock<IRelogio>();
+
+            relogio.Setup(r => r.hoje()).Returns(new DateTime(2018, 3, 11));
+            var leilao1 = new Leilao("Playstation");
+            leilao1.naData(new DateTime(1999, 5, 5));
+            leilao1.propoe(new Lance(new Usuario("renan"), 500));
+            leilao1.propoe(new Lance(new Usuario("Felipe"), 600));
+            var listaDeLeiloes = new List<Leilao> { leilao1 };
+
+            leilaoDao.Setup(l => l.encerrados()).Returns(listaDeLeiloes);
+
+            Pagamento pagamentoCapturado = null;
+            pagamentoDao.Setup(p => p.Salvar(It.IsAny<Pagamento>())).Callback<Pagamento>(c => pagamentoCapturado = c);
+
+            var gerador = new GeradorDePagamento(leilaoDao.Object, avaliador, pagamentoDao.Object, relogio.Object);
+            gerador.gera();
+
+            Assert.AreEqual(DayOfWeek.Monday, pagamentoCapturado.data.DayOfWeek);
         }
     }
 }

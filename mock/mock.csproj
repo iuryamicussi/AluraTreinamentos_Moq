@@ -58,9 +58,11 @@
     <Compile Include="dominio\Pagamento.cs" />
     <Compile Include="dominio\Usuario.cs" />
     <Compile Include="infra\IPagamentoDao.cs" />
+    <Compile Include="infra\IRelogio.cs" />
     <Compile Include="infra\IRepositorioDeLeiloes.cs" />
     <Compile Include="infra\LeilaoDaoFalso.cs" />
     <Compile Include="infra\PagamentoDao.cs" />
+    <Compile Include="infra\RelogioDoSistema.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="servico\Avaliador.cs" />
